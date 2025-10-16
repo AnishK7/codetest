@@ -1,10 +1,10 @@
 # Quick Start Guide
 
-Get up and running with the Solana dApp in under 10 minutes.
+Get the Solana Counter dApp running in under 10 minutes.
 
 ## Prerequisites Check
 
-Before starting, verify you have the required tools installed:
+Before starting, verify you have the required tools:
 
 ```bash
 # Check Node.js (v18+)
@@ -12,216 +12,184 @@ node --version
 
 # Check npm
 npm --version
+```
 
+**Optional** (only if deploying your own Solana program):
+```bash
 # Check Rust
 rustc --version
 
 # Check Solana CLI
 solana --version
 
-# Check Anchor (if using Anchor framework)
+# Check Anchor
 anchor --version
 ```
 
-If any are missing, see the [Prerequisites](README.md#prerequisites) section in the main README.
+If Node.js is missing, install it from [nodejs.org](https://nodejs.org/) or use [nvm](https://github.com/nvm-sh/nvm).
 
 ## Step 1: Clone and Setup
 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd <project-name>
+cd solana-counter-dapp
 
-# Run automated setup
-make setup
+# Setup frontend (automated)
+cd frontend
+npm install
+cp .env.example .env.local
 ```
-
-This will:
-- Create environment files from templates
-- Install all dependencies
-- Verify your development environment
 
 ## Step 2: Configure Environment
 
-### Backend Configuration
+Edit `frontend/.env.local`:
 
-Edit `backend/.env`:
-```bash
-cd backend
-cp .env.example .env
-nano .env  # or use your preferred editor
-```
-
-Update these values:
 ```env
-SOLANA_NETWORK=devnet
-SOLANA_RPC_URL=https://api.devnet.solana.com
-PROGRAM_ID=<will-be-set-after-deployment>
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
-### Frontend Configuration
+> **Note**: The default configuration connects to a deployed counter program on devnet. You don't need to deploy your own program to get started!
 
-Edit `frontend/.env`:
-```bash
-cd ../frontend
-cp .env.example .env
-nano .env
-```
+## Step 3: Install Solana Wallet
 
-Update these values:
-```env
-REACT_APP_BACKEND_URL=http://localhost:3001
-REACT_APP_SOLANA_NETWORK=devnet
-REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
-REACT_APP_PROGRAM_ID=<will-be-set-after-deployment>
-```
+Install a Solana wallet browser extension:
 
-## Step 3: Get Devnet SOL
+- **Phantom**: [phantom.app](https://phantom.app/)
+- **Solflare**: [solflare.com](https://solflare.com/)
 
-Configure Solana CLI and get some devnet SOL:
+After installation:
+1. Create or import a wallet
+2. Switch the network to **Devnet** in wallet settings
+3. Get some devnet SOL from the wallet's built-in faucet
+
+## Step 4: Start the Application
 
 ```bash
-# Configure for devnet
-solana config set --url devnet
-
-# Check your address
-solana address
-
-# Request airdrop (2 SOL)
-solana airdrop 2
-
-# Verify balance
-solana balance
-```
-
-If airdrop fails, try requesting manually at [Solana Faucet](https://faucet.solana.com/).
-
-## Step 4: Deploy Program
-
-Deploy the Solana program to devnet:
-
-```bash
-# From project root
-make deploy-devnet
-```
-
-Or manually:
-```bash
-cd program
-anchor build
-anchor deploy --provider.cluster devnet
-```
-
-**Important**: Copy the deployed program ID from the output!
-
-## Step 5: Update Program ID
-
-Update the program ID in both environment files:
-
-**Backend** (`backend/.env`):
-```env
-PROGRAM_ID=<your-deployed-program-id>
-```
-
-**Frontend** (`frontend/.env`):
-```env
-REACT_APP_PROGRAM_ID=<your-deployed-program-id>
-```
-
-## Step 6: Start Development Servers
-
-### Option A: Start All Services (Recommended)
-
-```bash
-# From project root
-make dev
-```
-
-This starts:
-- Local Solana validator (if using localnet)
-- Backend development server (port 3001)
-- Frontend development server (port 3000)
-
-### Option B: Start Services Individually
-
-In separate terminal windows:
-
-**Terminal 1 - Backend:**
-```bash
-cd backend
+# From the frontend directory
 npm run dev
 ```
 
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm start
-```
+The application will be available at `http://localhost:3000`.
 
-## Step 7: Access the Application
+## Step 5: Connect and Interact
 
-1. Open your browser to `http://localhost:3000`
-2. Install a Solana wallet extension (Phantom or Solflare)
-3. Configure wallet for devnet
-4. Connect your wallet to the app
-5. Start interacting with the dApp!
+1. **Open Browser**: Navigate to `http://localhost:3000`
+2. **Connect Wallet**: Click "Connect Wallet" button in the header
+3. **Select Wallet**: Choose Phantom or Solflare from the modal
+4. **Approve Connection**: Authorize the connection in your wallet
+5. **Use the Counter**: Click increment/decrement buttons
+6. **Approve Transactions**: Confirm each transaction in your wallet
 
 ## Verification Checklist
 
-- [ ] All prerequisites installed
-- [ ] Environment files configured
-- [ ] Devnet SOL in wallet
-- [ ] Program deployed to devnet
-- [ ] Program ID updated in .env files
-- [ ] Backend running on port 3001
-- [ ] Frontend running on port 3000
-- [ ] Wallet connected to devnet
-- [ ] Can interact with the dApp
+- [ ] Node.js 18+ installed
+- [ ] Wallet extension installed (Phantom/Solflare)
+- [ ] Wallet switched to devnet
+- [ ] Frontend dependencies installed
+- [ ] `.env.local` file configured
+- [ ] Dev server running at localhost:3000
+- [ ] Wallet connected successfully
+- [ ] Can interact with the counter
 
 ## Common Issues
 
-### "Insufficient funds" Error
+### Wallet Won't Connect
 
-**Solution**: Request more devnet SOL
+**Solution**: 
+- Ensure wallet extension is installed and unlocked
+- Check that wallet is on devnet network
+- Try refreshing the page
+- Clear browser cache and try again
+
+### "Insufficient SOL" Error
+
+**Solution**: 
 ```bash
-solana airdrop 2
+# Get devnet SOL from your wallet's built-in faucet
+# Or use the Solana CLI
+solana airdrop 2 --url devnet <YOUR_WALLET_ADDRESS>
+
+# Or visit https://faucet.solana.com/
 ```
 
-### "Program not found" Error
+### Port 3000 Already in Use
 
-**Solution**: Verify program ID in .env files matches deployed program
-```bash
-# Check deployed program
-solana program show <PROGRAM_ID>
-```
-
-### Port Already in Use
-
-**Solution**: Stop conflicting processes or change ports
+**Solution**:
 ```bash
 # Find process on port 3000
 lsof -i :3000
 
 # Kill the process
 kill -9 <PID>
+
+# Or use a different port
+PORT=3001 npm run dev
 ```
 
-### Wallet Not Connecting
+### RPC Errors / "Failed to fetch" Messages
 
-**Solution**: 
-1. Ensure wallet is on devnet network
-2. Refresh the page
-3. Try disconnecting and reconnecting
-4. Clear browser cache
+**Solution**:
+- Check your internet connection
+- Try a different RPC endpoint in `.env.local`:
+  ```env
+  NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+  # Or try
+  NEXT_PUBLIC_SOLANA_RPC_URL=https://rpc.ankr.com/solana_devnet
+  ```
+
+### Build Errors
+
+**Solution**:
+```bash
+# Clear cache and reinstall
+rm -rf node_modules .next package-lock.json
+npm install
+npm run dev
+```
 
 ## Next Steps
 
-Now that you're up and running:
+Now that you're running:
 
-1. **Explore the Code**: Check out [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
-2. **Read Development Guide**: See [DEVELOPMENT.md](DEVELOPMENT.md)
-3. **Run Tests**: Execute `make test`
-4. **Make Changes**: Follow [CONTRIBUTING.md](CONTRIBUTING.md)
+### 1. Explore the Code
+
+Check out the project structure:
+```
+frontend/src/
+├── app/                    # Next.js pages
+├── components/             # React components
+│   ├── counter-dashboard.tsx  # Main counter UI
+│   ├── wallet/            # Wallet components
+│   └── ui/                # Reusable UI
+├── hooks/                 # Custom hooks
+│   └── use-counter.ts     # Counter logic
+└── lib/                   # Utilities
+```
+
+### 2. Read the Documentation
+
+- **[Frontend README](frontend/README.md)**: Detailed frontend guide
+- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Development best practices
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: How to contribute
+
+### 3. Make Changes
+
+Try modifying the UI:
+```tsx
+// frontend/src/app/page.tsx
+// Change the heading text, colors, or layout
+```
+
+The page will automatically reload with your changes!
+
+### 4. Run Tests
+
+```bash
+cd frontend
+npm test
+```
 
 ## Development Workflow
 
@@ -232,15 +200,16 @@ Daily development routine:
 git pull origin main
 
 # 2. Install any new dependencies
-make install
+cd frontend && npm install
 
-# 3. Start dev environment
-make dev
+# 3. Start dev server
+npm run dev
 
 # 4. Make your changes
+# Edit files in frontend/src/
 
-# 5. Run tests
-make test
+# 5. Build for production
+npm run build
 
 # 6. Commit changes
 git add .
@@ -251,32 +220,96 @@ git push
 ## Useful Commands
 
 ```bash
-# Build all components
-make build
+# Frontend development
+cd frontend
+npm run dev      # Start dev server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run linting
 
-# Run tests
-make test
-
-# Lint code
-make lint
-
-# Format code
-make format
-
-# Clean build artifacts
-make clean
-
-# Deploy to devnet
-make deploy-devnet
+# From project root (if you have the full stack)
+make build       # Build all components
+make test        # Run all tests
+make setup       # Setup all components
 ```
+
+## (Optional) Deploy Your Own Program
+
+If you want to deploy your own Solana counter program:
+
+### Prerequisites
+
+```bash
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install Solana CLI
+sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
+
+# Install Anchor
+cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+avm install latest
+avm use latest
+```
+
+### Deploy
+
+```bash
+# Configure for devnet
+solana config set --url devnet
+
+# Get SOL for deployment
+solana airdrop 2
+
+# Deploy program (from project root)
+make deploy-devnet
+
+# Or manually
+cd program
+anchor build
+anchor deploy --provider.cluster devnet
+```
+
+Then update `frontend/.env.local` with your new program ID.
+
+## Production Deployment
+
+### Deploy Frontend to Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+cd frontend
+vercel
+```
+
+### Other Options
+
+- **Netlify**: Connect your git repo for auto-deploys
+- **Docker**: Build and deploy container
+- **Static Export**: `npm run build` and host anywhere
+
+See [frontend/README.md](frontend/README.md) for detailed deployment instructions.
 
 ## Getting Help
 
-- Check the [main README](README.md)
-- Review [troubleshooting section](README.md#troubleshooting)
-- Open an issue on GitHub
-- Join the project Discord/Slack
+- **Documentation**: Check [README.md](README.md) and [frontend/README.md](frontend/README.md)
+- **Troubleshooting**: See [README.md#troubleshooting](README.md#troubleshooting)
+- **Issues**: Open a GitHub issue with details
+- **Community**: Join Solana Discord at [discord.gg/solana](https://discord.gg/solana)
+
+## What's Next?
+
+- 🎨 **Customize the UI**: Change colors, layouts, and styling
+- 🔧 **Add features**: Implement new counter operations
+- 🧪 **Write tests**: Add unit and integration tests
+- 📱 **Make it PWA**: Add offline capabilities
+- 🚀 **Deploy**: Share your dApp with the world
 
 ---
 
 Happy building! 🚀
+
+**Need help?** Open an issue or reach out to the community.

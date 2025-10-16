@@ -1,56 +1,49 @@
-# Full Stack Solana dApp
+# Solana Counter dApp
 
-A complete full-stack Solana decentralized application with a Rust-based on-chain program, Node.js backend API, and React frontend.
+A full-stack Solana decentralized application demonstrating wallet integration and on-chain program interaction. Features a Next.js frontend with TypeScript and Tailwind CSS, connecting to a Solana counter program.
 
 > 📘 **New here?** Check out the [Quick Start Guide](QUICKSTART.md) to get up and running in under 10 minutes!
 
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-  - [1. Program Setup](#1-program-setup)
-  - [2. Backend Setup](#2-backend-setup)
-  - [3. Frontend Setup](#3-frontend-setup)
-- [Building and Testing](#building-and-testing)
-- [Deployment](#deployment)
-  - [Deploy to Devnet](#deploy-to-devnet)
-  - [Deploy to Mainnet](#deploy-to-mainnet)
-- [Usage Walkthrough](#usage-walkthrough)
-- [Development Workflow](#development-workflow)
-- [Troubleshooting](#troubleshooting)
-- [Future Enhancements](#future-enhancements)
-- [Contributing](#contributing)
-- [Additional Resources](#additional-resources)
-
 ## Project Overview
 
-This project demonstrates a production-ready Solana dApp architecture with:
-- **On-chain Program**: Rust-based Solana program for smart contract logic
-- **Backend API**: Node.js/Express server for off-chain data processing and indexing
-- **Frontend UI**: React-based web interface for user interaction
+This project demonstrates a complete Solana dApp with:
+- **Frontend UI**: Next.js application with Solana wallet integration (Phantom/Solflare)
+- **Counter Dashboard**: Interactive interface to view and modify an on-chain counter
+- **Modern Stack**: TypeScript, Tailwind CSS, and responsive design
+- **On-chain Program**: (Optional) Rust-based Solana program for counter logic
+- **Backend API**: (Optional) Node.js server for additional functionality
+
+## Features
+
+- 🔐 **Wallet Integration**: Connect with Phantom or Solflare wallets
+- 📊 **Counter Dashboard**: View and interact with the on-chain counter
+- ⚡ **Real-time Updates**: Live counter value and wallet status
+- 🎨 **Modern UI**: Beautiful, responsive design with Tailwind CSS
+- 📱 **Mobile Friendly**: Fully responsive across all devices
+- 🌙 **Dark Mode**: Beautiful dark-themed interface
 
 ## Project Structure
 
 ```
 .
-├── program/              # Solana program (Rust)
-│   ├── src/             # Program source code
-│   ├── tests/           # Program tests
-│   └── Cargo.toml       # Rust dependencies
+├── frontend/            # Next.js frontend application
+│   ├── src/
+│   │   ├── app/        # Next.js app directory
+│   │   ├── components/ # React components
+│   │   ├── hooks/      # Custom React hooks
+│   │   └── lib/        # Utility functions
+│   ├── package.json
+│   ├── .env.example
+│   └── README.md       # Frontend-specific docs
 │
-├── backend/             # Backend API server (Node.js)
+├── program/             # (Optional) Solana program (Rust)
+│   ├── src/            # Program source code
+│   ├── tests/          # Program tests
+│   └── Cargo.toml
+│
+├── backend/             # (Optional) Backend API server
 │   ├── src/            # Backend source code
-│   ├── tests/          # Backend tests
-│   ├── package.json    # Node dependencies
-│   └── .env.example    # Environment template
-│
-├── frontend/            # Frontend UI (React)
-│   ├── src/            # Frontend source code
-│   ├── public/         # Static assets
-│   ├── package.json    # Node dependencies
-│   └── .env.example    # Environment template
+│   └── package.json
 │
 ├── scripts/             # Orchestration and deployment scripts
 │   ├── setup.sh        # Complete setup automation
@@ -62,514 +55,276 @@ This project demonstrates a production-ready Solana dApp architecture with:
 └── README.md           # This file
 ```
 
-## Prerequisites
+## Quick Start
 
-Before setting up this project, ensure you have the following installed:
+### Prerequisites
 
-### Required Tools
+- **Node.js 18+** and npm
+- **Solana wallet extension** (Phantom or Solflare)
+- (Optional) **Rust & Cargo** if building the on-chain program
+- (Optional) **Solana CLI** for program deployment
 
-1. **Rust & Cargo** (v1.70+)
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
-
-2. **Solana CLI** (v1.17+)
-   ```bash
-   sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-   ```
-
-3. **Anchor Framework** (v0.29+)
-   ```bash
-   cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
-   avm install latest
-   avm use latest
-   ```
-
-4. **Node.js & npm** (v18+)
-   ```bash
-   # Using nvm (recommended)
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-   nvm install 18
-   nvm use 18
-   ```
-
-5. **Git**
-   ```bash
-   # Most systems have this pre-installed
-   git --version
-   ```
-
-### Optional Tools
-
-- **Docker & Docker Compose**: For containerized development
-- **Solana Test Validator**: Included with Solana CLI for local testing
-- **Phantom/Solflare Wallet**: Browser extension for testing frontend
-
-## Setup Instructions
-
-### Quick Start
-
-For automated setup of all components:
+### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd solana-counter-dapp
+
+# Run automated setup
 make setup
-```
 
-Or manually run the setup script:
-
-```bash
-./scripts/setup.sh
-```
-
-### Manual Setup
-
-#### 1. Program Setup
-
-Navigate to the program directory and build the Solana program:
-
-```bash
-cd program
-
-# Build the program (choose the toolchain that matches your workflow)
-anchor build               # Anchor-based projects
-# or
-cargo build-sbf            # Solana CLI (new toolchain)
-# or
-cargo build-bpf            # Solana CLI (legacy, pre-1.17)
-# or
-cargo build                # Native Rust build for logic/unit tests
-
-# Run tests
-anchor test                # Anchor tests
-# or
-cargo test                 # Native Rust tests
-
-# Return to root
-cd ..
-```
-
-**Configuration:**
-- Update `Anchor.toml` with your program ID if needed
-- Ensure your keypair is configured in `~/.config/solana/id.json`
-
-#### 2. Backend Setup
-
-Set up the backend API server:
-
-```bash
-cd backend
-
-# Copy environment template
-cp .env.example .env
-
-# Edit .env with your configuration
-nano .env
-
-# Install dependencies
+# Or manually setup frontend
+cd frontend
 npm install
+cp .env.example .env.local
+# Edit .env.local with your configuration
+npm run dev
+```
 
-# Run tests
-npm test
+The application will be available at `http://localhost:3000`.
+
+## Environment Configuration
+
+### Frontend (.env.local)
+
+```env
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+```
+
+### Backend (.env) - Optional
+
+```env
+PORT=3001
+NODE_ENV=development
+SOLANA_NETWORK=devnet
+SOLANA_RPC_URL=https://api.devnet.solana.com
+PROGRAM_ID=YourProgramIdHere
+```
+
+## Development
+
+### Frontend Development
+
+```bash
+cd frontend
 
 # Start development server
 npm run dev
 
-# Return to root
-cd ..
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
 ```
 
-**Environment Variables:**
+Visit `http://localhost:3000` to see the application.
 
-The backend requires the following environment variables (see `backend/.env.example`):
-
-- `PORT`: Server port (default: 3001)
-- `NODE_ENV`: Environment (development/production)
-- `SOLANA_RPC_URL`: Solana RPC endpoint
-- `SOLANA_NETWORK`: Network (devnet/mainnet-beta)
-- `PROGRAM_ID`: Deployed program ID
-- `DATABASE_URL`: Database connection string (optional)
-- `REDIS_URL`: Redis connection string (optional)
-
-#### 3. Frontend Setup
-
-Set up the React frontend:
+### Building All Components
 
 ```bash
-cd frontend
-
-# Copy environment template
-cp .env.example .env
-
-# Edit .env with your configuration
-nano .env
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Start development server
-npm start
-
-# Return to root
-cd ..
-```
-
-**Environment Variables:**
-
-The frontend requires the following environment variables (see `frontend/.env.example`):
-
-- `REACT_APP_BACKEND_URL`: Backend API URL (default: http://localhost:3001)
-- `REACT_APP_SOLANA_NETWORK`: Solana network (devnet/mainnet-beta)
-- `REACT_APP_SOLANA_RPC_URL`: Solana RPC endpoint
-- `REACT_APP_PROGRAM_ID`: Deployed program ID
-
-## Building and Testing
-
-### Build All Components
-
-```bash
+# From project root
 make build
 ```
 
-Or individually:
+### Running Tests
 
 ```bash
-# Build program
-make build-program
-
-# Build backend
-make build-backend
-
-# Build frontend
-make build-frontend
-```
-
-### Run Tests
-
-```bash
+# Test all components
 make test
+
+# Or test frontend only
+cd frontend && npm test
 ```
 
-Or individually:
+## Usage
 
-```bash
-# Test program
-make test-program
-
-# Test backend
-make test-backend
-
-# Test frontend
-make test-frontend
-```
-
-### Run Locally
-
-Start all services in development mode:
-
-```bash
-make dev
-```
-
-This will:
-1. Start a local Solana test validator
-2. Deploy the program locally
-3. Start the backend server
-4. Start the frontend dev server
-
-Access the application at `http://localhost:3000`
+1. **Connect Wallet**: Click "Connect Wallet" in the header
+2. **Select Wallet**: Choose Phantom or Solflare from the modal
+3. **Approve Connection**: Authorize the connection in your wallet
+4. **Interact with Counter**: Use the increment/decrement buttons
+5. **Approve Transactions**: Confirm each transaction in your wallet
 
 ## Deployment
 
-### Deploy to Devnet
+### Frontend Deployment (Vercel)
 
-1. **Configure Solana CLI for devnet:**
+The easiest way to deploy the Next.js frontend is using Vercel:
 
 ```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+cd frontend
+vercel
+```
+
+### Other Deployment Options
+
+- **Netlify**: Connect your git repository for automatic deployments
+- **AWS/Azure/GCP**: Use container services or static hosting
+- **Self-hosted**: Build and deploy using Docker
+
+See [frontend/README.md](frontend/README.md) for detailed deployment instructions.
+
+### Program Deployment (Optional)
+
+If you're deploying your own Solana program:
+
+```bash
+# Configure Solana CLI for devnet
 solana config set --url devnet
-```
 
-2. **Airdrop SOL for deployment (if needed):**
-
-```bash
+# Get devnet SOL
 solana airdrop 2
-```
 
-3. **Deploy the program:**
-
-```bash
+# Deploy the program
 make deploy-devnet
 ```
 
-Or use the deployment script:
+## Project Components
 
-```bash
-./scripts/deploy.sh devnet
-```
+### Frontend
 
-4. **Update environment files:**
+A Next.js application with:
+- Wallet adapter integration
+- Counter dashboard interface
+- Reusable UI components
+- TypeScript for type safety
+- Tailwind CSS for styling
 
-After deployment, update `backend/.env` and `frontend/.env` with:
-- The new `PROGRAM_ID` (printed after deployment)
-- Devnet RPC URL: `https://api.devnet.solana.com`
+**[Frontend Documentation →](frontend/README.md)**
 
-5. **Deploy backend and frontend:**
+### On-Chain Program (Optional)
 
-```bash
-# Backend (example using a service like Railway, Heroku, etc.)
-cd backend
-# Follow your hosting provider's deployment instructions
+Rust-based Solana program handling counter logic. Can be customized for your specific use case.
 
-# Frontend (example using Vercel, Netlify, etc.)
-cd frontend
-npm run build
-# Follow your hosting provider's deployment instructions
-```
+**[Program Documentation →](program/README.md)**
 
-### Deploy to Mainnet
+### Backend API (Optional)
 
-⚠️ **Warning**: Deploying to mainnet requires real SOL and should only be done after thorough testing.
+Node.js/Express server for additional off-chain functionality like data indexing, caching, or complex business logic.
 
-1. **Configure Solana CLI for mainnet:**
-
-```bash
-solana config set --url mainnet-beta
-```
-
-2. **Ensure you have sufficient SOL:**
-
-```bash
-solana balance
-```
-
-3. **Deploy the program:**
-
-```bash
-make deploy-mainnet
-```
-
-Or:
-
-```bash
-./scripts/deploy.sh mainnet-beta
-```
-
-4. **Update environment files** with mainnet configuration
-
-5. **Deploy backend and frontend** to production hosting
-
-## Usage Walkthrough
-
-### For End Users
-
-1. **Connect Wallet**
-   - Visit the application URL
-   - Click "Connect Wallet"
-   - Approve the connection in your Solana wallet (Phantom/Solflare)
-
-2. **Interact with the dApp**
-   - The UI will guide you through available actions
-   - Each transaction will prompt for wallet approval
-   - Monitor transaction status in the UI
-
-### For Developers
-
-1. **Local Development Setup**
-   ```bash
-   # Start local validator
-   solana-test-validator
-   
-   # In a new terminal, deploy program
-   cd program
-   anchor deploy
-   
-   # In a new terminal, start backend
-   cd backend
-   npm run dev
-   
-   # In a new terminal, start frontend
-   cd frontend
-   npm start
-   ```
-
-2. **Making Changes**
-   - Edit program code in `program/src/`
-   - Rebuild and redeploy: `anchor build && anchor deploy`
-   - Edit backend code in `backend/src/`
-   - Backend auto-reloads in dev mode
-   - Edit frontend code in `frontend/src/`
-   - Frontend auto-reloads in dev mode
-
-3. **Testing Changes**
-   ```bash
-   # Test program
-   anchor test
-   
-   # Test backend
-   cd backend && npm test
-   
-   # Test frontend
-   cd frontend && npm test
-   ```
+**[Backend Documentation →](backend/README.md)**
 
 ## Development Workflow
 
 ### Adding New Features
 
-1. **Create a feature branch:**
+1. Create a feature branch:
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-2. **Implement changes** in the appropriate component(s)
+2. Implement changes in the appropriate component
 
-3. **Write tests** for your changes
+3. Write tests for your changes
 
-4. **Run all tests:**
+4. Run tests and linting:
    ```bash
    make test
+   make lint
    ```
 
-5. **Commit and push:**
+5. Commit and push:
    ```bash
-   git add .
    git commit -m "feat: your feature description"
    git push origin feature/your-feature-name
    ```
 
-6. **Create a pull request** for review
+6. Create a pull request
 
-### Code Style Guidelines
+### Code Style
 
-- **Rust**: Follow standard Rust conventions and use `cargo fmt`
-- **JavaScript/TypeScript**: Use ESLint and Prettier configurations
+- **TypeScript**: Strict mode enabled, all code must be properly typed
+- **React**: Functional components with hooks
+- **Tailwind CSS**: Utility-first styling approach
 - **Commits**: Follow conventional commits format (feat:, fix:, docs:, etc.)
-
-### Testing Strategy
-
-- **Unit Tests**: Test individual functions and components
-- **Integration Tests**: Test component interactions
-- **E2E Tests**: Test complete user workflows
-- **Program Tests**: Use Anchor's testing framework
 
 ## Troubleshooting
 
-### Common Issues
+### Wallet Won't Connect
 
-1. **Program deployment fails**
-   - Ensure you have sufficient SOL: `solana balance`
-   - Check network configuration: `solana config get`
-   - Verify keypair: `solana address`
+- Ensure wallet extension is installed and unlocked
+- Check that you're on the correct network (devnet/mainnet)
+- Clear browser cache and try again
+- Check browser console for errors
 
-2. **Backend won't start**
-   - Check `.env` file exists and is configured
-   - Verify Node.js version: `node --version`
-   - Check port availability: `lsof -i :3001`
+### RPC Errors
 
-3. **Frontend can't connect to backend**
-   - Verify `REACT_APP_BACKEND_URL` in `frontend/.env`
-   - Check backend is running: `curl http://localhost:3001/health`
-   - Check for CORS issues in browser console
+- Verify `NEXT_PUBLIC_SOLANA_RPC_URL` is correct
+- Try switching to a different RPC endpoint
+- Check network status and rate limits
 
-4. **Wallet connection issues**
-   - Ensure wallet extension is installed and unlocked
-   - Switch wallet to correct network (devnet/mainnet)
-   - Clear browser cache and reload
+### Transaction Fails
 
-### Getting Help
+- Ensure wallet has sufficient SOL for transaction fees
+- Check that the program is deployed and accessible
+- Verify the program ID is correct
+- Check browser console for detailed error messages
 
-- Check existing issues on the repository
-- Review Solana documentation: https://docs.solana.com
-- Join Solana Discord: https://discord.gg/solana
-- Create a new issue with detailed error logs
+### Build Errors
 
-## Future Enhancements
+- Clear node_modules and reinstall: `rm -rf node_modules && npm install`
+- Clear Next.js cache: `rm -rf frontend/.next`
+- Check Node.js version: `node --version` (should be 18+)
 
-### Planned Features
+## Documentation
 
-- [ ] **Enhanced Program Features**
-  - Additional instruction handlers
-  - Advanced account validation
-  - Program upgradability patterns
+### Main Documentation
 
-- [ ] **Backend Improvements**
-  - WebSocket support for real-time updates
-  - Advanced caching with Redis
-  - Transaction indexing and history
-  - Rate limiting and API authentication
+- **[README.md](README.md)**: This file - project overview
+- **[QUICKSTART.md](QUICKSTART.md)**: Fast-track setup guide
+- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Detailed technical documentation
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Contribution guidelines
+- **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)**: Codebase organization
 
-- [ ] **Frontend Enhancements**
-  - Mobile responsive design
-  - Dark/light theme toggle
-  - Transaction history viewer
-  - Multi-wallet support
-  - PWA capabilities
+### Component Documentation
 
-- [ ] **DevOps & Tooling**
-  - CI/CD pipeline automation
-  - Docker compose for full stack
-  - Monitoring and logging setup
-  - Performance benchmarking
+- **[Frontend README](frontend/README.md)**: Next.js application guide
+- **[Program README](program/README.md)**: Solana program documentation
+- **[Backend README](backend/README.md)**: Backend API documentation
 
-- [ ] **Testing & Quality**
-  - Increased test coverage (target: >80%)
-  - Load testing scripts
-  - Security audit checklist
-  - Automated dependency updates
+## Tech Stack
 
-### Contributing Ideas
+- **[Next.js](https://nextjs.org/)** - React framework with SSR
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS
+- **[@solana/wallet-adapter](https://github.com/solana-labs/wallet-adapter)** - Wallet integration
+- **[@solana/web3.js](https://solana-labs.github.io/solana-web3.js/)** - Solana JavaScript SDK
+- **[Rust](https://www.rust-lang.org/)** (Optional) - For on-chain programs
+- **[Anchor](https://book.anchor-lang.com/)** (Optional) - Solana development framework
 
-We welcome contributions! Areas where help is particularly appreciated:
-
-- UI/UX improvements
-- Performance optimizations
-- Documentation enhancements
-- Test coverage expansion
-- Security reviews
-- Accessibility improvements
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Pull Request Guidelines
-
-- Provide a clear description of the changes
-- Include tests for new features
-- Update documentation as needed
-- Ensure all tests pass
-- Follow the code style guidelines
-- Reference any related issues
-
-## Additional Resources
+## Resources
 
 ### Documentation
 
-- **[Quick Start Guide](QUICKSTART.md)**: Get up and running quickly
-- **[Development Guide](DEVELOPMENT.md)**: Detailed technical documentation
-- **[Contributing Guide](CONTRIBUTING.md)**: How to contribute to the project
-- **[Project Structure](PROJECT_STRUCTURE.md)**: Understanding the codebase organization
-
-### Component-Specific Docs
-
-- **[Program README](program/README.md)**: Solana program development
-- **[Backend README](backend/README.md)**: Backend API documentation
-- **[Frontend README](frontend/README.md)**: Frontend application guide
-
-### External Resources
-
 - [Solana Documentation](https://docs.solana.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter)
 - [Anchor Book](https://book.anchor-lang.com/)
 - [Solana Cookbook](https://solanacookbook.com/)
-- [Solana Program Library](https://spl.solana.com/)
-- [React Documentation](https://react.dev/)
-- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
+
+### Community
+
+- [Solana Discord](https://discord.gg/solana)
+- [Solana Stack Exchange](https://solana.stackexchange.com/)
+- [Anchor Discord](https://discord.gg/anchor)
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Pull Request Process
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes with clear messages
+4. Push to your branch
+5. Open a Pull Request with a detailed description
 
 ## License
 
@@ -579,8 +334,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Solana Foundation for the blockchain platform
 - Anchor framework for Solana program development
-- React and Node.js communities
-- All contributors and maintainers
+- Next.js and Vercel teams for the amazing framework
+- The Solana developer community
 
 ---
 

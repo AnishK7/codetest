@@ -1,289 +1,259 @@
-# Frontend Application
+# Solana Counter Frontend
 
-React-based frontend for the Solana dApp.
+A modern, responsive Next.js application with TypeScript and Tailwind CSS that integrates with Solana wallets (Phantom/Solflare) to interact with an on-chain counter program.
 
-## Structure
+## Features
+
+- 🔐 **Wallet Integration**: Connect with Phantom or Solflare wallets
+- 📊 **Counter Dashboard**: View and interact with the on-chain counter
+- ⚡ **Real-time Updates**: Live counter value and wallet status
+- 🎨 **Modern UI**: Beautiful, responsive design with Tailwind CSS
+- 📱 **Mobile Friendly**: Fully responsive across all devices
+- 🌙 **Dark Mode**: Beautiful dark-themed interface
+
+## Project Structure
 
 ```
 frontend/
-├── public/                 # Static assets
-│   ├── index.html         # HTML template
-│   └── favicon.ico        # App favicon
 ├── src/
-│   ├── index.tsx          # App entry point
-│   ├── App.tsx            # Root component
-│   ├── components/        # Reusable components
-│   ├── pages/             # Page components
-│   ├── contexts/          # React contexts (wallet, etc.)
-│   ├── hooks/             # Custom hooks
-│   ├── services/          # API client & utilities
-│   ├── utils/             # Helper functions
-│   ├── types/             # TypeScript type definitions
-│   └── styles/            # CSS/styling
-├── package.json           # Dependencies & scripts
-├── tsconfig.json          # TypeScript configuration
-├── .env.example           # Environment variable template
-└── README.md              # This file
-```
-
-## Scripts
-
-Common npm scripts (define in `package.json`):
-
-```json
-{
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint 'src/**/*.{ts,tsx}'",
-    "format": "prettier --write 'src/**/*.{ts,tsx}'",
-    "type-check": "tsc --noEmit"
-  }
-}
+│   ├── app/                           # Next.js app directory
+│   │   ├── globals.css               # Global styles
+│   │   ├── layout.tsx                # Root layout with providers
+│   │   └── page.tsx                  # Home page
+│   ├── components/
+│   │   ├── counter-dashboard.tsx     # Main counter interface
+│   │   ├── providers/
+│   │   │   └── wallet-provider.tsx   # Wallet adapter setup
+│   │   ├── ui/                       # Reusable UI components
+│   │   │   ├── alert.tsx
+│   │   │   ├── button.tsx
+│   │   │   └── card.tsx
+│   │   └── wallet/                   # Wallet components
+│   │       ├── wallet-button.tsx
+│   │       └── wallet-status.tsx
+│   ├── hooks/
+│   │   └── use-counter.ts            # Counter logic hook
+│   └── lib/
+│       └── api.ts                    # API utilities
+├── .env.example                       # Environment template
+├── next.config.js                     # Next.js configuration
+├── package.json                       # Dependencies & scripts
+├── tailwind.config.js                 # Tailwind CSS config
+└── tsconfig.json                      # TypeScript configuration
 ```
 
 ## Environment Variables
 
-Configured via `.env` (copy from `.env.example`):
+Copy `.env.example` to `.env.local` and configure:
 
 ```env
-REACT_APP_BACKEND_URL=http://localhost:3001
-REACT_APP_SOLANA_NETWORK=devnet
-REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
-REACT_APP_PROGRAM_ID=ReplaceWithDeployedProgramId
-REACT_APP_NAME=Solana dApp
-REACT_APP_VERSION=1.0.0
-REACT_APP_ENABLE_ANALYTICS=false
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
-**Note**: Only variables prefixed with `REACT_APP_` are exposed to the client.
+**Note**: Only variables prefixed with `NEXT_PUBLIC_` are exposed to the client.
 
-## Development Workflow
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- A Solana wallet extension (Phantom or Solflare)
+
+### Installation
 
 ```bash
 # Install dependencies
 npm install
 
 # Run development server
-npm start
+npm run dev
 
-# Run tests
-npm test
+# Open http://localhost:3000 in your browser
+```
 
-# Lint code
-npm run lint
+### Available Scripts
 
-# Build for production
-npm run build
+```bash
+npm run dev      # Start development server
+npm run build    # Create production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
 ```
 
 ## Key Dependencies
 
-### Solana Wallet Adapter
+- **Next.js** - React framework with server-side rendering
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
+- **@solana/wallet-adapter-react** - Solana wallet integration
+- **@solana/web3.js** - Solana Web3 library
 
-Integrate wallet connectivity:
+## Component Overview
 
-```bash
-npm install @solana/wallet-adapter-react \
-            @solana/wallet-adapter-react-ui \
-            @solana/wallet-adapter-wallets \
-            @solana/web3.js
+### Counter Dashboard
+
+The main interface component that displays:
+- Current counter value
+- Increment/Decrement buttons
+- Transaction status and loading states
+- Error handling
+
+### Wallet Provider
+
+Configures Solana wallet adapters:
+- Connection to Solana RPC
+- Phantom and Solflare wallet support
+- Auto-connect functionality
+
+### UI Components
+
+Reusable components:
+- **Button**: Styled buttons with variants and loading states
+- **Card**: Container component with consistent styling
+- **Alert**: Notification component for success/error messages
+
+## Usage
+
+1. **Connect Wallet**: Click the "Connect Wallet" button in the header
+2. **Select Wallet**: Choose Phantom or Solflare from the modal
+3. **Approve Connection**: Authorize the connection in your wallet
+4. **Interact with Counter**: Use the increment/decrement buttons
+5. **Approve Transactions**: Confirm each transaction in your wallet
+
+## Development Tips
+
+### Hot Reload
+
+Next.js provides automatic hot reloading. Changes to components will reflect immediately without page refresh.
+
+### TypeScript
+
+The project uses strict TypeScript. Ensure all components and functions are properly typed:
+
+```tsx
+interface CounterProps {
+  initialValue: number;
+  onUpdate?: (value: number) => void;
+}
+
+export function Counter({ initialValue, onUpdate }: CounterProps) {
+  // Component implementation
+}
 ```
 
-Example setup:
-```tsx
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
+### Styling with Tailwind
 
-function App() {
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = clusterApiUrl(network);
-  const wallets = [new PhantomWalletAdapter()];
-
-  return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          {/* Your app content */}
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-}
-```
-
-## Project Conventions
-
-### Component Structure
+Use Tailwind's utility classes for styling:
 
 ```tsx
-import React from 'react';
-
-interface MyComponentProps {
-  title: string;
-  onAction: () => void;
-}
-
-export function MyComponent({ title, onAction }: MyComponentProps) {
-  return (
-    <div>
-      <h1>{title}</h1>
-      <button onClick={onAction}>Action</button>
-    </div>
-  );
-}
+<div className="flex items-center gap-4 rounded-lg bg-slate-800 p-4">
+  <button className="rounded-md bg-primary-600 px-4 py-2 hover:bg-primary-700">
+    Click me
+  </button>
+</div>
 ```
 
 ### Custom Hooks
 
+Extract reusable logic into custom hooks:
+
 ```tsx
-import { useState, useEffect } from 'react';
-
-export function useBalance(publicKey: string | null) {
-  const [balance, setBalance] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!publicKey) return;
-
-    // Fetch balance logic
-    fetchBalance(publicKey).then(setBalance);
-  }, [publicKey]);
-
-  return balance;
+export function useCounter() {
+  const [count, setCount] = useState(0);
+  const increment = () => setCount(c => c + 1);
+  const decrement = () => setCount(c => c - 1);
+  return { count, increment, decrement };
 }
 ```
 
-### Context Usage
+## API Integration
 
-```tsx
-import { createContext, useContext, useState } from 'react';
+The app expects a backend API running at `NEXT_PUBLIC_API_BASE_URL`. The API should provide:
 
-const ThemeContext = createContext();
-
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
-
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-export function useTheme() {
-  return useContext(ThemeContext);
-}
-```
-
-## Wallet Integration
-
-### Connect Wallet
-
-```tsx
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-
-function ConnectWallet() {
-  return <WalletMultiButton />;
-}
-```
-
-### Send Transaction
-
-```tsx
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-
-function SendTransaction() {
-  const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
-
-  const handleSend = async () => {
-    if (!publicKey) return;
-
-    const transaction = /* build transaction */;
-    const signature = await sendTransaction(transaction, connection);
-    await connection.confirmTransaction(signature);
-  };
-
-  return <button onClick={handleSend}>Send</button>;
-}
-```
-
-## Styling
-
-### CSS Modules
-```tsx
-import styles from './MyComponent.module.css';
-
-function MyComponent() {
-  return <div className={styles.container}>Content</div>;
-}
-```
-
-### Tailwind CSS
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init
-```
-
-### Styled Components
-```bash
-npm install styled-components
-```
-
-## Testing
-
-### Component Testing
-```tsx
-import { render, screen } from '@testing-library/react';
-import { MyComponent } from './MyComponent';
-
-test('renders component', () => {
-  render(<MyComponent title="Test" />);
-  expect(screen.getByText('Test')).toBeInTheDocument();
-});
-```
-
-### Hook Testing
-```tsx
-import { renderHook } from '@testing-library/react-hooks';
-import { useBalance } from './useBalance';
-
-test('fetches balance', async () => {
-  const { result, waitForNextUpdate } = renderHook(() =>
-    useBalance('public-key')
-  );
-  await waitForNextUpdate();
-  expect(result.current).toBeGreaterThan(0);
-});
+```typescript
+GET  /api/counter        // Get current counter value
+POST /api/counter/increment
+POST /api/counter/decrement
 ```
 
 ## Build for Production
 
 ```bash
-# Build optimized bundle
+# Create optimized production build
 npm run build
 
-# Preview production build locally
-npx serve -s build
+# Start production server
+npm run start
+
+# Or export static site
+npm run build && npm run export
 ```
 
 ## Deployment
 
-Common deployment platforms:
-- **Vercel**: Zero-config deployment for React apps
-- **Netlify**: Continuous deployment with Git integration
-- **AWS S3 + CloudFront**: Static hosting with CDN
-- **GitHub Pages**: Free hosting for public repos
+### Vercel (Recommended)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+### Netlify
+
+```bash
+# Build command: npm run build
+# Publish directory: .next
+```
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+CMD ["npm", "start"]
+```
+
+## Troubleshooting
+
+### Wallet Won't Connect
+
+- Ensure wallet extension is installed and unlocked
+- Check that you're on the correct network (devnet/mainnet)
+- Clear browser cache and try again
+- Check browser console for errors
+
+### RPC Errors
+
+- Verify `NEXT_PUBLIC_SOLANA_RPC_URL` is correct
+- Try switching to a different RPC endpoint
+- Check network status and rate limits
+
+### Transaction Fails
+
+- Ensure wallet has sufficient SOL for transaction fees
+- Check that the program is deployed and accessible
+- Verify the program ID is correct
 
 ## Resources
 
-- [React Documentation](https://react.dev/)
+- [Next.js Documentation](https://nextjs.org/docs)
 - [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter)
 - [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
-- [TypeScript + React](https://react-typescript-cheatsheet.netlify.app/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [TypeScript](https://www.typescriptlang.org/docs/)
+
+## Contributing
+
+See the main [CONTRIBUTING.md](../CONTRIBUTING.md) file for guidelines.
+
+## License
+
+See the [LICENSE](../LICENSE) file for details.

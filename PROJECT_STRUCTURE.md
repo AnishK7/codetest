@@ -31,21 +31,24 @@ solana-dapp/
 │   ├── .env.example        # Environment template
 │   └── README.md           # Backend-specific documentation
 │
-├── frontend/                # Frontend React application
+├── frontend/                # Frontend Next.js application
 │   ├── src/
-│   │   ├── index.js        # App entry point
-│   │   ├── App.js          # Root component
+│   │   ├── app/            # Next.js app directory
+│   │   │   ├── globals.css # Global styles
+│   │   │   ├── layout.tsx  # Root layout
+│   │   │   └── page.tsx    # Home page
 │   │   ├── components/     # React components
-│   │   ├── pages/          # Page components
+│   │   │   ├── counter-dashboard.tsx
+│   │   │   ├── providers/  # Context providers
+│   │   │   ├── ui/         # UI components
+│   │   │   └── wallet/     # Wallet components
 │   │   ├── hooks/          # Custom React hooks
-│   │   ├── contexts/       # React contexts (wallet, etc.)
-│   │   ├── services/       # API client services
-│   │   ├── utils/          # Utility functions
-│   │   └── styles/         # CSS/styling files
-│   ├── public/             # Static assets
-│   ├── tests/              # Frontend tests
+│   │   └── lib/            # Utility functions
 │   ├── package.json        # Node.js dependencies
 │   ├── .env.example        # Environment template
+│   ├── next.config.js      # Next.js configuration
+│   ├── tailwind.config.js  # Tailwind CSS config
+│   ├── tsconfig.json       # TypeScript config
 │   └── README.md           # Frontend-specific documentation
 │
 ├── scripts/                 # Automation scripts
@@ -125,55 +128,52 @@ function authenticateToken(req, res, next) { /* ... */ }
 
 ### Frontend (`/frontend`)
 
-React-based web interface.
+Next.js-based web interface with TypeScript and Tailwind CSS.
 
 **Key Directories:**
+
+**`src/app/`**: Next.js App Directory
+```
+app/
+├── globals.css      # Global styles with Tailwind
+├── layout.tsx       # Root layout with providers
+└── page.tsx         # Home page with counter dashboard
+```
 
 **`src/components/`**: Reusable UI components
 ```
 components/
-├── common/          # Shared components (Button, Input, etc.)
-├── wallet/          # Wallet-related components
-└── transaction/     # Transaction components
-```
-
-**`src/pages/`**: Full page components
-```javascript
-// Example: pages/Dashboard.js
-function Dashboard() {
-  return <div>Dashboard content</div>;
-}
+├── counter-dashboard.tsx    # Main counter interface
+├── providers/              # Context providers (wallet)
+├── ui/                     # Reusable UI (Button, Card, Alert)
+└── wallet/                 # Wallet components
 ```
 
 **`src/hooks/`**: Custom React hooks
-```javascript
-// Example: hooks/useWallet.js
-function useWallet() {
-  const [connected, setConnected] = useState(false);
-  // ...
-  return { connected, connect, disconnect };
+```typescript
+// Example: hooks/use-counter.ts
+export function useCounter() {
+  const [count, setCount] = useState(0);
+  // Counter logic
+  return { count, increment, decrement };
 }
 ```
 
-**`src/contexts/`**: React context providers
-```javascript
-// Example: contexts/WalletContext.js
-export const WalletContext = createContext();
-```
-
-**`src/services/`**: API clients and external services
-```javascript
-// Example: services/api.js
-export const api = {
-  fetchUser: (id) => axios.get(`/api/users/${id}`)
-};
+**`src/lib/`**: Utility functions and API clients
+```typescript
+// Example: lib/api.ts
+export async function fetchCounter() {
+  // API call logic
+}
 ```
 
 **Conventions:**
-- Use PascalCase for component files and names
+- Use PascalCase for component files and names (`.tsx`)
 - Use camelCase for utilities and hooks
 - Prefix custom hooks with `use`
+- Use Tailwind CSS utility classes for styling
 - Keep components small and focused
+- All code is TypeScript with strict mode
 
 ### Scripts (`/scripts`)
 

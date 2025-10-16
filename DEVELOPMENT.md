@@ -29,12 +29,9 @@ This document provides detailed information for developers working on this Solan
 # Pull latest changes
 git pull origin main
 
-# Start development servers
-make dev
-
-# In separate terminals, watch for changes
-cd backend && npm run dev
-cd frontend && npm start
+# Start frontend
+cd frontend
+npm run dev
 
 # Run tests as you develop
 make test
@@ -81,9 +78,10 @@ make test
 - Testing: Jest/Mocha
 
 **Frontend (Client)**
-- Framework: React
+- Framework: Next.js
+- Language: TypeScript
 - Wallet: @solana/wallet-adapter
-- UI Library: (to be determined)
+- UI Library: Tailwind CSS
 - Testing: Jest + React Testing Library
 
 ### Data Flow
@@ -122,16 +120,14 @@ SESSION_SECRET=generate-a-secure-secret
 ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-#### Frontend `.env`
+#### Frontend `.env.local`
 
 ```env
-# API
-REACT_APP_BACKEND_URL=http://localhost:3001
+# Solana configuration
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
 
-# Solana
-REACT_APP_SOLANA_NETWORK=devnet
-REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
-REACT_APP_PROGRAM_ID=YourProgramIdHere
+# Optional backend API
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
 ### Local Solana Validator
@@ -151,11 +147,11 @@ solana cluster-version
 
 ### Hot Reloading
 
-All components support hot reloading in development:
+The frontend supports hot reloading in development:
 
-- **Program**: Rebuild with `anchor build` and redeploy
-- **Backend**: Uses `nodemon` or similar for auto-restart
-- **Frontend**: React dev server auto-reloads on changes
+- **Frontend**: Next.js dev server auto-reloads on changes
+- **Program**: Rebuild with `anchor build` and redeploy (if developing)
+- **Backend**: Uses `nodemon` or similar for auto-restart (if developing)
 
 ## Coding Standards
 
