@@ -1,0 +1,101 @@
+Solana Counter Program - Project Structure
+==========================================
+
+Root Level
+----------
+.
+├── .editorconfig                # Editor configuration
+├── .gitignore                   # Git ignore patterns
+├── .prettierrc                  # Prettier configuration
+├── .prettierignore              # Prettier ignore patterns
+├── Anchor.toml                  # Anchor workspace configuration (devnet)
+├── Cargo.toml                   # Rust workspace configuration
+├── Makefile                     # Build automation commands
+├── package.json                 # Node.js dependencies (Anchor tests)
+├── tsconfig.json                # TypeScript configuration (tests)
+├── yarn.lock                    # Yarn lock file
+├── LICENSE                      # MIT License
+├── README.md                    # Main documentation
+├── QUICKSTART.md                # Quick start guide
+└── CONTRIBUTING.md              # Contribution guidelines
+
+Smart Contract
+--------------
+programs/
+└── counter-program/
+    ├── Cargo.toml              # Program dependencies
+    └── src/
+        └── lib.rs              # Counter program implementation
+                                 # - initialize instruction
+                                 # - increment instruction
+                                 # - Counter account structure
+                                 # - Error handling
+
+Tests
+-----
+tests/
+└── counter-program.ts           # Comprehensive test suite
+                                 # - Initialize test
+                                 # - Increment test
+                                 # - Multiple increments test
+                                 # - Authority validation test
+
+Frontend
+--------
+frontend/
+├── package.json                 # Frontend dependencies
+├── tsconfig.json               # TypeScript config
+├── next.config.js              # Next.js configuration
+├── tailwind.config.js          # Tailwind CSS config
+├── postcss.config.js           # PostCSS config
+├── .eslintrc.json             # ESLint config
+├── .env.example               # Environment variables template
+└── src/                       # Source code
+    ├── app/                   # Next.js app directory
+    ├── components/            # React components
+    ├── hooks/                # Custom hooks
+    └── lib/                  # Utility libraries
+
+Backend
+-------
+backend/
+└── README.md                   # Backend placeholder documentation
+
+Scripts
+-------
+scripts/
+├── README.md                   # Scripts documentation
+├── deploy.sh                   # Interactive deployment script
+└── setup-local.sh              # Local development setup
+
+Migrations
+----------
+migrations/
+└── deploy.ts                   # Anchor deployment migration
+
+Key Features
+------------
+✅ Anchor-based Solana smart contract
+✅ Initialize and increment counter operations
+✅ Authority validation and overflow protection
+✅ Comprehensive test suite
+✅ Devnet-ready configuration
+✅ Deployment automation scripts
+✅ Next.js frontend with wallet integration
+✅ Full documentation and guides
+
+Build Artifacts (git-ignored)
+------------------------------
+target/                         # Rust build output
+node_modules/                   # Node.js dependencies
+.anchor/                        # Anchor cache
+test-ledger/                    # Local validator data
+.next/                          # Next.js build output
+
+Configuration Details
+---------------------
+- Anchor Version: 0.32.1
+- Rust Toolchain: 1.89.0
+- Default Cluster: devnet
+- Program ID: GK5CdkKWciUWsj6uSLSZwJBDpji7AavaBin5dZau4uX3
+- Package Manager: Yarn (Anchor), NPM (Frontend)
